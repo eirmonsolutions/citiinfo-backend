@@ -1,0 +1,121 @@
+app/
+├── Console/
+├── Exceptions/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Auth/
+│   │   │   ├── LoginController.php
+│   │   │   ├── RegisterController.php
+│   │   │   └── LogoutController.php
+│   │   │
+│   │   ├── SuperAdmin/
+│   │   │   ├── DashboardController.php
+│   │   │   ├── AdminManagementController.php
+│   │   │   ├── PropertyAdminController.php
+│   │   │   ├── ShopController.php
+│   │   │   └── SettingsController.php
+│   │   │
+│   │   ├── Admin/
+│   │   │   ├── DashboardController.php
+│   │   │   ├── PropertyController.php
+│   │   │   ├── ShopController.php
+│   │   │   ├── UserController.php
+│   │   │   └── DialController.php
+│   │   │
+│   │   ├── PropertyAdmin/
+│   │   │   ├── DashboardController.php
+│   │   │   ├── PropertyController.php
+│   │   │   ├── TenantController.php
+│   │   │   └── DialController.php
+│   │   │
+│   │   ├── User/
+│   │   │   ├── DashboardController.php
+│   │   │   ├── PropertyViewController.php
+│   │   │   └── ProfileController.php
+│   │   │
+│   │   └── Api/
+│   │       └── V1/
+│   │           ├── AuthController.php
+│   │           └── DialApiController.php
+│   │
+│   ├── Middleware/
+│   │   ├── SuperAdminMiddleware.php
+│   │   ├── AdminMiddleware.php
+│   │   ├── PropertyAdminMiddleware.php
+│   │   └── UserMiddleware.php
+│   │
+│   └── Requests/
+│       ├── Shop/
+│       │   ├── StoreShopRequest.php
+│       │   └── UpdateShopRequest.php
+│       └── Property/
+│           └── StorePropertyRequest.php
+│
+├── Models/
+│   ├── User.php
+│   ├── Role.php
+│   ├── Shop.php
+│   ├── Property.php
+│   ├── DialLog.php
+│   └── Permission.php
+│
+├── Services/
+│   ├── DialService.php
+│   ├── ShopService.php
+│   ├── PropertyService.php
+│   └── UserService.php
+│
+├── Policies/
+│   ├── PropertyPolicy.php
+│   └── ShopPolicy.php
+│
+├── Providers/
+└── Traits/
+    └── HasRoles.php
+│
+│
+resources/views/
+├── auth/
+│   ├── login.blade.php
+│   ├── register.blade.php
+│   └── forgot-password.blade.php
+│
+├── superadmin/
+│   ├── dashboard.blade.php
+│   ├── admins/
+│   │   └── index.blade.php
+│   ├── shops/
+│   │   ├── index.blade.php
+│   │   └── create.blade.php
+│   └── settings.blade.php
+│
+├── admin/
+│   ├── dashboard.blade.php
+│   ├── shops/
+│   │   ├── index.blade.php
+│   │   └── create.blade.php
+│   ├── properties/
+│   │   └── index.blade.php
+│   └── users/
+│       └── index.blade.php
+│
+├── property-admin/
+│   ├── dashboard.blade.php
+│   ├── properties/
+│   │   └── index.blade.php
+│   └── tenants/
+│       └── index.blade.php
+│
+├── user/
+│   ├── dashboard.blade.php
+│   ├── properties.blade.php
+│   └── profile.blade.php
+│
+├── layouts/
+│   ├── app.blade.php
+│   ├── admin.blade.php
+│   └── superadmin.blade.php
+│
+└── components/
+    ├── sidebar.blade.php
+    └── navbar.blade.php
