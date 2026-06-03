@@ -1,5 +1,12 @@
 @php
     $blog = $blog ?? null;
+    $faqItems = old('faq_items');
+    if ($faqItems === null) {
+        $faqItems = $blog?->normalizedFaqItems() ?? [];
+    }
+    if ($faqItems === []) {
+        $faqItems = [['question' => '', 'answer' => '']];
+    }
 @endphp
 
 <div class="col-md-8">
@@ -55,6 +62,40 @@
         <textarea name="content" class="form-control rich-editor" rows="12">{{ old('content', $blog->content ?? '') }}</textarea>
         @error('content')<div class="text-danger small">{{ $message }}</div>@enderror
     </div>
+</div>
+
+<hr class="my-3">
+
+<h5 class="mb-3">FAQ (Frequently Asked Questions)</h5>
+<p class="text-muted small mb-3">Add questions and answers. FAQ JSON-LD schema is generated automatically on the public post.</p>
+
+<div class="col-md-12">
+    <div id="blogFaqRepeater">
+        @foreach($faqItems as $i => $item)
+        <div class="blog-faq-row border rounded p-3 mb-3">
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label">Question</label>
+                    <input type="text" name="faq_items[{{ $i }}][question]" class="form-control"
+                        placeholder="e.g. What does NAP stand for in SEO?"
+                        value="{{ $item['question'] ?? '' }}">
+                    @error("faq_items.$i.question")<div class="text-danger small">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Answer</label>
+                    <textarea name="faq_items[{{ $i }}][answer]" class="form-control" rows="3"
+                        placeholder="Write the answer...">{{ $item['answer'] ?? '' }}</textarea>
+                    @error("faq_items.$i.answer")<div class="text-danger small">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-12 text-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-blog-faq">Remove</button>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    <button type="button" id="addBlogFaqBtn" class="theme-btn btn-sm">+ Add FAQ</button>
+    @error('faq_items')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
 </div>
 
 <hr class="my-3">

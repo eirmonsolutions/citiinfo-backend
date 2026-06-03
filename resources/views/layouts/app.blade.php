@@ -48,6 +48,7 @@
     </script>
     <!-- End Google Tag Manager -->
 
+    @stack('head')
     @stack('styles')
 </head>
 

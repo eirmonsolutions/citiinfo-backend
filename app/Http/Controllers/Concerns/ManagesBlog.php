@@ -25,8 +25,29 @@ trait ManagesBlog
             'meta_description'  => ['nullable', 'string'],
             'meta_keywords'     => ['nullable', 'string'],
             'meta_image'        => ['nullable', 'image', 'max:5120'],
+            'faq_items'         => ['nullable', 'array'],
+            'faq_items.*.question' => ['nullable', 'string', 'max:500'],
+            'faq_items.*.answer'   => ['nullable', 'string'],
             'is_published'      => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function normalizeFaqItemsInput(?array $items): ?array
+    {
+        if ($items === null) {
+            return null;
+        }
+
+        $normalized = collect($items)
+            ->map(fn ($item) => [
+                'question' => trim((string) ($item['question'] ?? '')),
+                'answer'   => trim((string) ($item['answer'] ?? '')),
+            ])
+            ->filter(fn ($item) => $item['question'] !== '' && $item['answer'] !== '')
+            ->values()
+            ->all();
+
+        return $normalized === [] ? null : $normalized;
     }
 
     protected function saveBlog(Blog $blog, Request $request, int $userId): void
@@ -43,6 +64,7 @@ trait ManagesBlog
             'meta_title'        => $request->input('meta_title'),
             'meta_description'  => $request->input('meta_description'),
             'meta_keywords'     => $request->input('meta_keywords'),
+            'faq_items'         => $this->normalizeFaqItemsInput($request->input('faq_items')),
             'is_published'      => $request->boolean('is_published'),
         ]);
 

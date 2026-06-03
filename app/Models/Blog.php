@@ -21,6 +21,7 @@ class Blog extends Model
         'meta_description',
         'meta_keywords',
         'meta_image',
+        'faq_items',
         'is_published',
     ];
 
@@ -28,6 +29,46 @@ class Blog extends Model
     {
         return [
             'is_published' => 'boolean',
+            'faq_items'    => 'array',
+        ];
+    }
+
+    /**
+     * @return array<int, array{question: string, answer: string}>
+     */
+    public function normalizedFaqItems(): array
+    {
+        $items = is_array($this->faq_items) ? $this->faq_items : [];
+
+        return collect($items)
+            ->map(fn ($item) => [
+                'question' => trim((string) ($item['question'] ?? '')),
+                'answer'   => trim((string) ($item['answer'] ?? '')),
+            ])
+            ->filter(fn ($item) => $item['question'] !== '' && $item['answer'] !== '')
+            ->values()
+            ->all();
+    }
+
+    public function faqSchemaArray(): ?array
+    {
+        $items = $this->normalizedFaqItems();
+
+        if ($items === []) {
+            return null;
+        }
+
+        return [
+            '@context'   => 'https://schema.org',
+            '@type'      => 'FAQPage',
+            'mainEntity' => array_map(fn (array $item) => [
+                '@type'          => 'Question',
+                'name'           => $item['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $item['answer'],
+                ],
+            ], $items),
         ];
     }
 
@@ -88,6 +129,7 @@ class Blog extends Model
             'meta_keywords'      => $this->meta_keywords,
             'meta_image'         => $this->meta_image,
             'meta_image_url'     => $this->metaImageUrl() ? url($this->metaImageUrl()) : null,
+            'faq_items'          => $this->normalizedFaqItems(),
             'is_published'       => (bool) $this->is_published,
             'public_url'         => url('/blog/post/' . $this->slug),
             'created_at'         => $this->created_at?->toIso8601String(),
@@ -103,7 +145,8 @@ class Blog extends Model
         }
 
         if ($detailed) {
-            $data['content'] = $this->content;
+            $data['content']     = $this->content;
+            $data['faq_schema'] = $this->faqSchemaArray();
         }
 
         return $data;

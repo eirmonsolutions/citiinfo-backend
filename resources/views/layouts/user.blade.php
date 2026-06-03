@@ -26,7 +26,7 @@
     @stack('styles')
 </head>
 
-<body>
+<body class="dashboard-page">
     @php
     $user = auth()->user();
 

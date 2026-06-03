@@ -24,4 +24,8 @@
 
 @include('partials.rich-editor')
 
+@push('scripts')
+@include('partials.blog-faq-script')
+@endpush
+
 @endsection

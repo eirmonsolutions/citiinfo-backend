@@ -6,6 +6,15 @@
 
 @section('meta_keywords', $blog->meta_keywords ?: '')
 
+@php $faqSchema = $blog->faqSchemaArray(); @endphp
+@if($faqSchema)
+@push('head')
+<script type="application/ld+json">
+@json($faqSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+</script>
+@endpush
+@endif
+
 @section('content')
 
 <section class="banner-area-other">
@@ -37,6 +46,34 @@
                 <div class="blog-inner-content">
                     {!! $blog->content !!}
                 </div>
+
+                @php $faqs = $blog->normalizedFaqItems(); @endphp
+                @if(count($faqs))
+                <div class="blog-detail-faq mt-5">
+                    <h3>Frequently Asked Questions (FAQs)</h3>
+                    <div class="faq-list mt-4">
+                        <div class="accordion" id="blogFaqAccordion">
+                            @foreach($faqs as $i => $faq)
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#blogFaq{{ $i }}"
+                                        aria-expanded="{{ $i === 0 ? 'true' : 'false' }}" aria-controls="blogFaq{{ $i }}">
+                                        {{ $i + 1 }}. {{ $faq['question'] }}
+                                    </button>
+                                </h2>
+                                <div id="blogFaq{{ $i }}" class="accordion-collapse collapse {{ $i === 0 ? 'show' : '' }}"
+                                    data-bs-parent="#blogFaqAccordion">
+                                    <div class="accordion-body">
+                                        {{ $faq['answer'] }}
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 <div class="mt-4">
                     <a class="listing-btn" href="{{ route('blog.index') }}">← Back to Blogs</a>

@@ -26,7 +26,7 @@
     @stack('styles')
 </head>
 
-<body>
+<body class="dashboard-page">
 
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <div id="appToast"
