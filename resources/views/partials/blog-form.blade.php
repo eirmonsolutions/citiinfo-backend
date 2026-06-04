@@ -1,12 +1,12 @@
 @php
-    $blog = $blog ?? null;
-    $faqItems = old('faq_items');
-    if ($faqItems === null) {
-        $faqItems = $blog?->normalizedFaqItems() ?? [];
-    }
-    if ($faqItems === []) {
-        $faqItems = [['question' => '', 'answer' => '']];
-    }
+$blog = $blog ?? null;
+$faqItems = old('faq_items');
+if ($faqItems === null) {
+$faqItems = $blog?->normalizedFaqItems() ?? [];
+}
+if ($faqItems === []) {
+$faqItems = [['question' => '', 'answer' => '']];
+}
 @endphp
 
 <div class="col-md-8">
@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<div class="col-md-6">
+<div class="col-md-3">
     <div class="form-group mb-3">
         <label class="form-label">Publish</label>
         <div class="form-check mt-2">
@@ -53,6 +53,18 @@
                 @checked(old('is_published', $blog->is_published ?? false))>
             <label class="form-check-label" for="is_published">Published (visible on website)</label>
         </div>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="form-group mb-3">
+        <label class="form-label">Blog Date</label>
+
+        <input
+            type="date"
+            name="blog_date"
+            class="form-control"
+            value="{{ old('blog_date', isset($blog) && $blog->blog_date ? $blog->blog_date->format('Y-m-d') : date('Y-m-d')) }}"
+        >
     </div>
 </div>
 

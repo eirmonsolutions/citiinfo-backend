@@ -15,6 +15,7 @@ class Blog extends Model
         'title',
         'slug',
         'description',
+        'blog_date',
         'content',
         'image',
         'meta_title',
@@ -28,6 +29,7 @@ class Blog extends Model
     protected function casts(): array
     {
         return [
+            'blog_date'    => 'date',
             'is_published' => 'boolean',
             'faq_items'    => 'array',
         ];
@@ -41,11 +43,11 @@ class Blog extends Model
         $items = is_array($this->faq_items) ? $this->faq_items : [];
 
         return collect($items)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'question' => trim((string) ($item['question'] ?? '')),
                 'answer'   => trim((string) ($item['answer'] ?? '')),
             ])
-            ->filter(fn ($item) => $item['question'] !== '' && $item['answer'] !== '')
+            ->filter(fn($item) => $item['question'] !== '' && $item['answer'] !== '')
             ->values()
             ->all();
     }
@@ -61,7 +63,7 @@ class Blog extends Model
         return [
             '@context'   => 'https://schema.org',
             '@type'      => 'FAQPage',
-            'mainEntity' => array_map(fn (array $item) => [
+            'mainEntity' => array_map(fn(array $item) => [
                 '@type'          => 'Question',
                 'name'           => $item['question'],
                 'acceptedAnswer' => [
@@ -85,8 +87,8 @@ class Blog extends Model
 
         while (
             static::where('slug', $slug)
-                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
-                ->exists()
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()
         ) {
             $slug = $original . '-' . $counter;
             $counter++;
@@ -121,6 +123,7 @@ class Blog extends Model
             'user_id'            => $this->user_id,
             'title'              => $this->title,
             'slug'               => $this->slug,
+            'blog_date' => $this->blog_date ? $this->blog_date->format('Y-m-d') : null,
             'description'        => $this->description,
             'image'              => $this->image,
             'image_url'          => $this->imageUrl() ? url($this->imageUrl()) : null,

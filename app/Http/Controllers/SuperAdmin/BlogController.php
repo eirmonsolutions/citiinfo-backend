@@ -15,7 +15,8 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::with('user:id,name,email')
-            ->latest()
+            ->latest('blog_date')
+            ->latest('created_at')
             ->paginate(10)
             ->withQueryString();
 
@@ -32,6 +33,7 @@ class BlogController extends Controller
         $request->validate($this->blogRules());
 
         $blog = new Blog();
+
         $this->saveBlog($blog, $request, (int) auth()->id());
 
         return redirect()
@@ -60,6 +62,7 @@ class BlogController extends Controller
         if ($blog->image) {
             Storage::disk('public')->delete($blog->image);
         }
+
         if ($blog->meta_image) {
             Storage::disk('public')->delete($blog->meta_image);
         }
