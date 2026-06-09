@@ -293,7 +293,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin')->group
     Route::get('/inbox/{enquiry}', [InboxController::class, 'show'])->name('.inbox.show');
     Route::patch('/inbox/{enquiry}/read', [InboxController::class, 'markRead'])->name('.inbox.markRead');
     Route::delete('/inbox/{enquiry}', [InboxController::class, 'destroy'])->name('.inbox.destroy');
-
 });
 
 
