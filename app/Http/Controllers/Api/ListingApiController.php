@@ -54,6 +54,10 @@ class ListingApiController extends Controller
             ->where('status', 'published')
             ->where('is_allowed', 1);
 
+        if ($request->boolean('homepage')) {
+            $query->where('show_on_homepage', 1);
+        }
+
         if ($q !== '') {
             $query->where(function ($qq) use ($q) {
                 $qq->where('business_name', 'like', "%{$q}%")
