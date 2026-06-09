@@ -29,6 +29,10 @@ use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\FrontSearchController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
+use App\Http\Controllers\Admin\InboxController;
+use App\Http\Controllers\SuperAdmin\AnalyticsController as SuperadminAnalyticsController;
+use App\Http\Controllers\ListingEnquiryController;
 use App\Http\Controllers\AjaxLocationController;
 use App\Http\Controllers\SuperAdmin\SuperadminDashboardController;
 use App\Http\Controllers\SuperAdmin\BlogController;
@@ -204,6 +208,8 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::get('/blog/{blog}/edit', [BlogController::class, 'edit'])->name('.blog.edit');
     Route::put('/blog/{blog}/update', [BlogController::class, 'update'])->name('.blog.update');
     Route::delete('/blog/{blog}', [BlogController::class, 'destroy'])->name('.blog.destroy');
+
+    Route::get('/analytics', [SuperadminAnalyticsController::class, 'index'])->name('.analytics.index');
 });
 
 
@@ -281,7 +287,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin')->group
 
 
 
-    // whishlist
+    Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('.analytics.index');
+
+    Route::get('/inbox', [InboxController::class, 'index'])->name('.inbox.index');
+    Route::get('/inbox/{enquiry}', [InboxController::class, 'show'])->name('.inbox.show');
+    Route::patch('/inbox/{enquiry}/read', [InboxController::class, 'markRead'])->name('.inbox.markRead');
+    Route::delete('/inbox/{enquiry}', [InboxController::class, 'destroy'])->name('.inbox.destroy');
 
 });
 
@@ -293,6 +304,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin')->group
 //     ->name('admin.dashboard');
 
 Route::get('listing/{slug}', [ListingController::class, 'show'])->name('listingdetail');
+Route::post('listing/{slug}/enquiry', [ListingEnquiryController::class, 'store'])->name('listing.enquiry.store');
 
 
 // Route::get('/gd-check', function () {

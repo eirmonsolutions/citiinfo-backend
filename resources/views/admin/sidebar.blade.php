@@ -68,6 +68,10 @@ $role = auth()->user()->role ?? 'user';
             ADMIN SIDEBAR (role=admin)
         ============================ --}}
         @if($role === 'admin')
+        @php
+            $adminListingIds = \App\Models\BusinessListing::where('user_id', auth()->id())->pluck('id');
+            $adminUnreadInbox = \App\Models\BusinessEnquiry::whereIn('business_listing_id', $adminListingIds)->where('is_read', false)->count();
+        @endphp
 
         <a href="{{ route('admin.dashboard') }}" class="sidebar-list {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <svg width="22" height="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -138,6 +142,31 @@ $role = auth()->user()->role ?? 'user';
                 <path d="M16 17H8" />
             </svg>
             <span class="sidebar-link">Listings</span>
+        </a>
+
+        <a href="{{ route('admin.analytics.index') }}" class="sidebar-list {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-bar-chart-3">
+                <path d="M3 3v18h18" />
+                <path d="M18 17V9" />
+                <path d="M13 17V5" />
+                <path d="M8 17v-3" />
+            </svg>
+            <span class="sidebar-link">Analytics</span>
+        </a>
+
+        <a href="{{ route('admin.inbox.index') }}" class="sidebar-list {{ request()->routeIs('admin.inbox.*') ? 'active' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-inbox">
+                <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+            </svg>
+            @if($adminUnreadInbox > 0)
+            <span class="listing-badge">{{ $adminUnreadInbox }}</span>
+            @endif
+            <span class="sidebar-link">Inbox</span>
         </a>
 
         <a href="{{ route('wishlist.index') }}" class="sidebar-list {{ request()->routeIs('wishlist.*') ? 'active' : '' }}">

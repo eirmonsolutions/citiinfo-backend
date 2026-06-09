@@ -162,4 +162,14 @@ class BusinessListing extends Model
     {
         return $this->hasMany(\App\Models\Coupon::class, 'listing_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
+
+    public function enquiries()
+    {
+        return $this->hasMany(\App\Models\BusinessEnquiry::class, 'business_listing_id');
+    }
 }

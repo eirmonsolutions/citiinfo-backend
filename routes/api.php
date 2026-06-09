@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\BlogApiController;
 use App\Http\Controllers\Api\BlogManageApiController;
 use App\Http\Controllers\Api\BlogUserApiController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\ListingViewApiController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -90,6 +91,7 @@ Route::get('/categories/{slug}', [CategoryPageController::class, 'show']);
 Route::get('/listings', [ListingApiController::class, 'index']);
 
 Route::post('/business-enquiry', [BusinessEnquiryApiController::class, 'store']);
+Route::post('/listings/{slug}/view', [ListingViewApiController::class, 'store']);
 Route::post('/business-reviews', [BusinessReviewApiController::class, 'store']);
 
 

@@ -850,23 +850,24 @@
                     <div class="row mt-3">
                         <div class="col-md-12">
                             <div class="contact-form-wrapper">
-                                <form action="" class="row form-grid">
+                                <form action="{{ route('listing.enquiry.store', $listing->slug) }}" method="POST" class="row form-grid">
+                                    @csrf
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="form-label" for="user_name">Enter Your Name <span class="required">*</span></label>
-                                            <input type="text" id="user_name" name="user_name" placeholder="John Doe">
+                                            <input type="text" id="user_name" name="name" value="{{ old('name') }}" placeholder="John Doe" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="form-label" for="user_email">Enter Your Email <span class="required">*</span></label>
-                                            <input type="text" id="user_email" name="user_email" placeholder="abcd@gmail.com">
+                                            <input type="email" id="user_email" name="email" value="{{ old('email') }}" placeholder="abcd@gmail.com" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="form-label" for="user_phone">Enter Your Phone Number <span class="required">*</span></label>
-                                            <input type="text" id="user_phone" name="user_phone" placeholder="800-123-4567">
+                                            <input type="text" id="user_phone" name="phone" value="{{ old('phone') }}" placeholder="800-123-4567" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -874,7 +875,7 @@
                                             <label for="user_message" class="form-label">
                                                 Message
                                             </label>
-                                            <textarea id="user_message" name="user_message" class="form-control textarea-field" placeholder="Describe your business, services, and specialties" rows="4"></textarea>
+                                            <textarea id="user_message" name="message" class="form-control textarea-field" placeholder="Describe your business, services, and specialties" rows="4">{{ old('message') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-12">

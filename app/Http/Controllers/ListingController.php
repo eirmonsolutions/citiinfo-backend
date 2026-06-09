@@ -31,6 +31,7 @@ use Carbon\Carbon;
 use App\Models\BusinessReview;
 use App\Mail\ListingSubmittedMail;
 use App\Mail\NewListingAdminNotificationMail;
+use App\Services\ListingViewService;
 
 class ListingController extends Controller
 {
@@ -39,7 +40,7 @@ class ListingController extends Controller
 
 
 
-    public function show($slug)
+    public function show($slug, ListingViewService $viewService)
     {
         $today = Carbon::today()->toDateString();
 
@@ -81,6 +82,9 @@ class ListingController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        if ($listing->status === 'published' && $listing->is_allowed) {
+            $viewService->record($listing);
+        }
 
         // ✅ Reviews Base Query (approved only)
         $reviewsBase = $listing->reviews()->where('is_approved', true);
