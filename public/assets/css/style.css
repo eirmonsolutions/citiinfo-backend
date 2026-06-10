@@ -4885,9 +4885,13 @@ button.accordion-button {
 }
 
 
+span.badge.bg-label-primary {
+    color: #017eff;
+}
 
-
-
+span.badge.bg-label-secondary {
+    color: #017eff;
+}
 
 
 

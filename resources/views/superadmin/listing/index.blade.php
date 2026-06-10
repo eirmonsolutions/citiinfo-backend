@@ -147,6 +147,7 @@
                                 </svg>
                             </a>
 
+                            
                             {{-- Approve --}}
                             <form method="POST"
                                 action="{{ route('superadmin.listing.approve', $listing->id) }}"

@@ -251,6 +251,7 @@ class SuperadminListingController extends Controller
             }
 
             // ✅ update listing main
+            // ✅ update listing main
             $listing->update([
                 'business_name' => $businessName,
                 'category_id'   => $categoryId,
@@ -270,7 +271,22 @@ class SuperadminListingController extends Controller
 
                 'listing_type'  => $listingType,
                 'is_featured'   => (bool)($request->input('is_featured') ?? $listing->is_featured),
+
+                // ✅ status/allow save
+                'status'        => $request->input('status', $listing->status),
+                'is_allowed'    => (int) $request->input('is_allowed', $listing->is_allowed),
             ]);
+
+            // ✅ agar listing approved/published ho gayi to user ko admin bana do
+            if (
+                $listing->status === 'published' &&
+                (int) $listing->is_allowed === 1 &&
+                !empty($listing->user_id)
+            ) {
+                User::where('id', $listing->user_id)
+                    ->where('role', 'user')
+                    ->update(['role' => 'admin']);
+            }
 
             // ✅ CONTACT (updateOrCreate)
             if ($request->filled('contact_name') || $request->filled('phone') || $request->filled('email')) {
