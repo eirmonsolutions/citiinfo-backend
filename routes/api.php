@@ -22,7 +22,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/auth-user', function (Request $request) {
+
     $user = auth('sanctum')->user();
+
+    // Fallback to web session
+    if (!$user) {
+        $user = auth()->user();
+    }
 
     if (!$user) {
         return response()->json([
@@ -42,6 +48,7 @@ Route::get('/auth-user', function (Request $request) {
     }
 
     if ($role === 'admin') {
+
         $businessUserId = $user->business_user_id ?? $user->id;
 
         $businessName = BusinessListing::where('user_id', $businessUserId)
@@ -71,6 +78,7 @@ Route::get('/auth-user', function (Request $request) {
         'user' => [
             'id' => $user->id,
             'name' => $user->name,
+            'email' => $user->email,
             'role' => $role,
             'display_name' => $displayName,
             'initials' => $initials,
@@ -79,7 +87,7 @@ Route::get('/auth-user', function (Request $request) {
             'wishlist_count' => 0,
         ],
     ]);
-})->middleware('auth:sanctum');
+});
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
