@@ -31,10 +31,16 @@ class ConfigureHostingSession
         }
 
         if (str_ends_with($host, 'citiinfo.com.au')) {
+            $sessionDomain = env('SESSION_DOMAIN');
+
+            if (empty($sessionDomain)) {
+                $sessionDomain = '.citiinfo.com.au';
+            }
+
             config([
-                'session.domain'      => null,
-                'session.secure'      => true,
-                'session.same_site'   => 'lax',
+                'session.domain'    => $sessionDomain,
+                'session.secure'    => true,
+                'session.same_site' => 'lax',
             ]);
         } elseif ($isHttps) {
             config(['session.secure' => true]);
