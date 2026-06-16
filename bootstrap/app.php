@@ -26,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ConfigureHostingSession::class,
         ]);
 
+        // Share web login session with /api/* when called from Next.js (localhost:3000)
+        $middleware->statefulApi();
+
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);

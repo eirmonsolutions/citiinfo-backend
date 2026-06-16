@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\BusinessListing;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CategoryPageController;
@@ -16,81 +15,21 @@ use App\Http\Controllers\Api\BlogManageApiController;
 use App\Http\Controllers\Api\BlogUserApiController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ListingViewApiController;
+use App\Http\Controllers\Api\WishlistApiController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/auth-user', function (Request $request) {
-
-    $user = auth('sanctum')->user();
-
-    // Fallback to web session
-    if (!$user) {
-        $user = auth()->user();
-    }
-
-    if (!$user) {
-        return response()->json([
-            'authenticated' => false,
-            'user' => null,
-        ]);
-    }
-
-    $role = $user->role ?? 'user';
-
-    $displayName = $user->name ?? 'User';
-    $dashboardUrl = url('/user/dashboard');
-
-    if ($role === 'superadmin') {
-        $displayName = 'Super Admin';
-        $dashboardUrl = url('/superadmin/dashboard');
-    }
-
-    if ($role === 'admin') {
-
-        $businessUserId = $user->business_user_id ?? $user->id;
-
-        $businessName = BusinessListing::where('user_id', $businessUserId)
-            ->latest('id')
-            ->value('business_name');
-
-        if (!empty($businessName)) {
-            $displayName = $businessName;
-        }
-
-        $dashboardUrl = url('/admin/dashboard');
-    }
-
-    if (in_array($role, ['seo_user', 'site_user', 'blog_user'], true)) {
-        $dashboardUrl = url('/seo-user/dashboard');
-    }
-
-    $parts = preg_split('/\s+/', trim($displayName));
-
-    $initials = strtoupper(
-        substr($parts[0] ?? 'U', 0, 1) .
-            substr($parts[1] ?? '', 0, 1)
-    );
-
-    return response()->json([
-        'authenticated' => true,
-        'user' => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $role,
-            'display_name' => $displayName,
-            'initials' => $initials,
-            'avatar' => $user->avatar ?? null,
-            'dashboard_url' => $dashboardUrl,
-            'wishlist_count' => 0,
-        ],
-    ]);
-});
-
+/*
+|--------------------------------------------------------------------------
+| Auth API (login, register, profile, logout)
+|--------------------------------------------------------------------------
+*/
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/auth/profile', [AuthController::class, 'profile']);
+Route::get('/auth-user', [AuthController::class, 'profile']); // backward compatible alias
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::get('/home-categories', [CategoryController::class, 'homeCategories']);
@@ -100,7 +39,13 @@ Route::get('/listings', [ListingApiController::class, 'index']);
 
 Route::post('/business-enquiry', [BusinessEnquiryApiController::class, 'store']);
 Route::post('/listings/{slug}/view', [ListingViewApiController::class, 'store']);
-Route::post('/business-reviews', [BusinessReviewApiController::class, 'store']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/business-reviews', [BusinessReviewApiController::class, 'store']);
+    Route::get('/wishlist', [WishlistApiController::class, 'index']);
+    Route::get('/wishlist/ids', [WishlistApiController::class, 'ids']);
+    Route::post('/wishlist/toggle', [WishlistApiController::class, 'toggle']);
+});
 
 
 

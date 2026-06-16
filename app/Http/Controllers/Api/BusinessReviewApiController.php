@@ -10,30 +10,38 @@ class BusinessReviewApiController extends Controller
 {
     public function store(Request $request)
     {
-        if (!auth()->check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please login first to submit your review.',
-            ], 401);
-        }
+        $user = $request->user();
 
         $data = $request->validate([
             'business_id' => 'required|exists:business_listings,id',
-            'rating'      => 'required|integer|min:1|max:5',
-            'review'      => 'required|string|min:50',
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|min:10',
         ]);
+
+        $existing = BusinessReview::where('business_id', $data['business_id'])
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'ok' => false,
+                'success' => false,
+                'message' => 'You have already reviewed this listing.',
+            ], 422);
+        }
 
         BusinessReview::create([
             'business_id' => $data['business_id'],
-            'user_id'     => auth()->id(),
-            'name'        => auth()->user()->name,
-            'email'       => auth()->user()->email,
-            'rating'      => $data['rating'],
-            'review'      => $data['review'],
-            'status'      => 1,
+            'user_id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'rating' => $data['rating'],
+            'review' => $data['review'],
+            'is_approved' => true,
         ]);
 
         return response()->json([
+            'ok' => true,
             'success' => true,
             'message' => 'Thank you! Your review has been submitted successfully.',
         ]);

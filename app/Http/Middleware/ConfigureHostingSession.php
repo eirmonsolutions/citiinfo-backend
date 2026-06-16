@@ -24,9 +24,9 @@ class ConfigureHostingSession
             URL::forceScheme('https');
         }
 
-        // Override bad .env / cached config (common cause of 419 on Hostinger)
+        // Keep SESSION_DOMAIN=localhost so the same browser session works on :3000 → :8000 API calls.
         $domain = config('session.domain');
-        if (in_array($domain, ['localhost', '127.0.0.1', '.localhost'], true)) {
+        if (in_array($domain, ['127.0.0.1', '.127.0.0.1'], true)) {
             config(['session.domain' => null]);
         }
 
