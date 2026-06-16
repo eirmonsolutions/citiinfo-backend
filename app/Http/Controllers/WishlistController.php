@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Wishlist;
 use App\Models\BusinessListing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class WishlistController extends Controller
 {
@@ -12,23 +13,27 @@ class WishlistController extends Controller
     {
         $userId = auth()->id();
 
-        $ids = Wishlist::where('user_id', $userId)->pluck('business_id');
+        $wishIds = Wishlist::where('user_id', $userId)->pluck('business_id')->all();
 
-        $listings = BusinessListing::whereIn('id', $ids)
+        $listings = BusinessListing::query()
+            ->with(['gallery', 'hours', 'categoryRel', 'cityRel'])
+            ->whereIn('id', $wishIds)
+            ->where('status', 'published')
+            ->where('is_allowed', 1)
             ->latest()
             ->get();
 
-        return view('admin.wishlist.index', compact('listings'));
+        return view('admin.wishlist.index', compact('listings', 'wishIds'));
     }
 
     public function toggle(Request $request)
     {
-        $userId = auth()->id() ?? auth('admin')->id();
+        $userId = auth()->id();
 
-        if (!$userId) {
+        if (! $userId) {
             return response()->json([
                 'success' => false,
-                'message' => 'Login required'
+                'message' => 'Login required',
             ], 401);
         }
 
@@ -44,12 +49,13 @@ class WishlistController extends Controller
 
         if ($existing) {
             $existing->delete();
+            Cache::forget("wishlist_count_{$userId}");
 
             return response()->json([
                 'success' => true,
                 'saved' => false,
                 'action' => 'removed',
-                'message' => 'Listing removed from wishlist.'
+                'message' => 'Listing removed from wishlist.',
             ]);
         }
 
@@ -58,30 +64,24 @@ class WishlistController extends Controller
             'business_id' => $businessId,
         ]);
 
+        Cache::forget("wishlist_count_{$userId}");
+
         return response()->json([
             'success' => true,
             'saved' => true,
             'action' => 'added',
-            'message' => 'Listing added to wishlist.'
+            'message' => 'Listing added to wishlist.',
         ]);
     }
 
     public function index()
     {
-        $userId = auth()->id() ?? auth('admin')->id();
+        $userId = auth()->id();
 
-        if (!$userId) {
+        if (! $userId) {
             return redirect()->route('login');
         }
 
-        $wishBusinessIds = Wishlist::where('user_id', $userId)->pluck('business_id');
-
-        $listings = BusinessListing::whereIn('id', $wishBusinessIds)
-            ->where('status', 'published')
-            ->where('is_allowed', 1)
-            ->latest()
-            ->get();
-
-        return view('pages.wishlist', compact('listings'));
+        return redirect()->route('wishlist.index');
     }
 }

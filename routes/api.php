@@ -30,6 +30,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/auth/profile', [AuthController::class, 'profile']);
 Route::get('/auth-user', [AuthController::class, 'profile']); // backward compatible alias
+Route::get('/auth/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+});
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::get('/home-categories', [CategoryController::class, 'homeCategories']);
@@ -37,10 +40,10 @@ Route::get('/categories', [CategoryPageController::class, 'index']);
 Route::get('/categories/{slug}', [CategoryPageController::class, 'show']);
 Route::get('/listings', [ListingApiController::class, 'index']);
 
-Route::post('/business-enquiry', [BusinessEnquiryApiController::class, 'store']);
 Route::post('/listings/{slug}/view', [ListingViewApiController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/business-enquiry', [BusinessEnquiryApiController::class, 'store']);
     Route::post('/business-reviews', [BusinessReviewApiController::class, 'store']);
     Route::get('/wishlist', [WishlistApiController::class, 'index']);
     Route::get('/wishlist/ids', [WishlistApiController::class, 'ids']);

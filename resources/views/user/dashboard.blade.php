@@ -25,6 +25,15 @@
         </h1>
 
 
+        @php
+            $userMessageCount = \App\Models\BusinessEnquiry::query()
+                ->where(function ($q) {
+                    $q->where('sender_user_id', auth()->id())
+                        ->orWhere('email', auth()->user()->email);
+                })
+                ->count();
+        @endphp
+
         <section class="dashboard-boxes">
             <div class="row">
 
@@ -95,16 +104,15 @@
                                 </svg>
                             </div>
                             <div class="stat-change vehicles-change">
-                                <span>980</span>
+                                <span>{{ $userMessageCount }}</span>
                             </div>
                         </div>
                         <div class="stat-content">
-                            <!-- <h3>890</h3> -->
                             <div class="stat-number-row">
-                                <p class="stat-number">Customer Reviews</p>
-                                <button class="stat-button vehicles-button">
+                                <p class="stat-number">My Messages</p>
+                                <a href="{{ route('user.messages.index') }}" class="stat-button vehicles-button">
                                     <span>More Info</span>
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

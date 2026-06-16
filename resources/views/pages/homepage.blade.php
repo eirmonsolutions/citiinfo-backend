@@ -439,11 +439,11 @@
 
                                 <div class="testimonial-text">
 
-                                    @if(($listing->ratings_count ?? 0) > 0 && $listing->ratings->count())
+                                    @if(($listing->ratings_count ?? 0) > 0 && $listing->reviews?->isNotEmpty())
 
-                                    <p>"{{ $listing->ratings->first()->review ?? 'Great service!' }}"</p>
+                                    <p>"{{ $listing->reviews->first()->review ?? 'Great service!' }}"</p>
                                     <span class="testimonial-author">
-                                        {{ $listing->ratings->first()->user_name ?? 'Verified Customer' }}
+                                        {{ $listing->reviews->first()->name ?? 'Verified Customer' }}
                                     </span>
 
                                     @else

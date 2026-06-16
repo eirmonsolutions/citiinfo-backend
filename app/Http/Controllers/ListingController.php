@@ -137,12 +137,22 @@ class ListingController extends Controller
             'email'        => auth()->user()->email,
             'rating'       => (int) $request->rating,
             'review'       => $request->review,
-            'is_approved'  => 1, // ✅ immediate show (change to 0 if admin approval)
+            'is_approved'  => 1,
         ]);
+
+        $review = BusinessReview::where('business_id', $listing->id)
+            ->where('user_id', auth()->id())
+            ->latest('id')
+            ->first();
+
+        if ($review) {
+            app(\App\Services\BusinessEnquiryService::class)
+                ->syncFromReview($review, auth()->user());
+        }
 
         return redirect()
             ->route('listingdetail', $listing->slug)
-            ->with('swal_success', 'Review submitted successfully!');
+            ->with('swal_success', 'Review submitted successfully! Check Messages in your dashboard for replies.');
     }
 
 

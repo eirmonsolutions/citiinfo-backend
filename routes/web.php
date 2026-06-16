@@ -14,6 +14,7 @@ use App\Http\Controllers\SuperAdmin\FeatureController;
 use App\Http\Controllers\SuperAdmin\SuperadminListingController;
 use App\Http\Controllers\SuperAdmin\SuperadminAddListingController;
 use App\Http\Controllers\UserAddListingController;
+use App\Http\Controllers\User\MessageController as UserMessageController;
 use App\Http\Controllers\ListingController;
 use App\Models\Feature;
 use App\Models\Category;
@@ -32,6 +33,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Admin\InboxController;
 use App\Http\Controllers\SuperAdmin\AnalyticsController as SuperadminAnalyticsController;
+use App\Http\Controllers\SuperAdmin\SuperadminInboxController;
 use App\Http\Controllers\ListingEnquiryController;
 use App\Http\Controllers\AjaxLocationController;
 use App\Http\Controllers\SuperAdmin\SuperadminDashboardController;
@@ -114,13 +116,19 @@ Route::middleware(['auth', 'role:user'])->group(function () {
         return view('user.dashboard'); // resources/views/user/dashboard.blade.php
     })->name('user.dashboard');
 
-    Route::get('/wishlist', [WishlistController::class, 'indexAdmin'])->name('wishlist.index');
-
     Route::get('/user/add-listing', [UserAddListingController::class, 'index'])
         ->name('user.addlisting.create');
 
     Route::post('/user/add-listing', [UserAddListingController::class, 'store'])
         ->name('user.addlisting.store');
+
+    Route::get('/user/messages', [UserMessageController::class, 'index'])->name('user.messages.index');
+    Route::get('/user/messages/{enquiry}', [UserMessageController::class, 'show'])->name('user.messages.show');
+    Route::post('/user/messages/{enquiry}/reply', [UserMessageController::class, 'reply'])->name('user.messages.reply');
+});
+
+Route::middleware(['auth', 'role:user,admin'])->group(function () {
+    Route::get('/wishlist', [WishlistController::class, 'indexAdmin'])->name('wishlist.index');
 });
 
 
@@ -210,6 +218,11 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::delete('/blog/{blog}', [BlogController::class, 'destroy'])->name('.blog.destroy');
 
     Route::get('/analytics', [SuperadminAnalyticsController::class, 'index'])->name('.analytics.index');
+
+    Route::get('/messages', [SuperadminInboxController::class, 'index'])->name('.messages.index');
+    Route::get('/messages/{enquiry}', [SuperadminInboxController::class, 'show'])->name('.messages.show');
+    Route::post('/messages/{enquiry}/reply', [SuperadminInboxController::class, 'reply'])->name('.messages.reply');
+    Route::delete('/messages/{enquiry}', [SuperadminInboxController::class, 'destroy'])->name('.messages.destroy');
 });
 
 
@@ -291,6 +304,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin')->group
 
     Route::get('/inbox', [InboxController::class, 'index'])->name('.inbox.index');
     Route::get('/inbox/{enquiry}', [InboxController::class, 'show'])->name('.inbox.show');
+    Route::post('/inbox/{enquiry}/reply', [InboxController::class, 'reply'])->name('.inbox.reply');
     Route::patch('/inbox/{enquiry}/read', [InboxController::class, 'markRead'])->name('.inbox.markRead');
     Route::delete('/inbox/{enquiry}', [InboxController::class, 'destroy'])->name('.inbox.destroy');
 });

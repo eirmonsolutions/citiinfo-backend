@@ -32,7 +32,14 @@ class HomeController extends Controller
             : [];
 
         // ✅ Homepage par sirf random 6 listings
-        $listings = BusinessListing::with(['gallery', 'hours', 'contacts'])
+        $listings = BusinessListing::with([
+                'gallery',
+                'hours',
+                'contacts',
+                'reviews' => function ($q) {
+                    $q->where('is_approved', 1)->latest()->limit(1);
+                },
+            ])
             ->withAvg(['reviews as avg_rating' => function ($q) {
                 $q->where('is_approved', 1);
             }], 'rating')

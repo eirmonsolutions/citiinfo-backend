@@ -845,7 +845,7 @@
 
 
                 <div class="listing-contact-form">
-                    <h3 class="heading-title">Quick Enquiry</h3>
+                    <h3 class="heading-title">Send a Message</h3>
 
                     <div class="row mt-3">
                         <div class="col-md-12">
@@ -855,13 +855,13 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="form-label" for="user_name">Enter Your Name <span class="required">*</span></label>
-                                            <input type="text" id="user_name" name="name" value="{{ old('name') }}" placeholder="John Doe" required>
+                                            <input type="text" id="user_name" name="name" value="{{ old('name', auth()->user()->name ?? '') }}" placeholder="John Doe" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="form-label" for="user_email">Enter Your Email <span class="required">*</span></label>
-                                            <input type="email" id="user_email" name="email" value="{{ old('email') }}" placeholder="abcd@gmail.com" required>
+                                            <input type="email" id="user_email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="abcd@gmail.com" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -875,7 +875,7 @@
                                             <label for="user_message" class="form-label">
                                                 Message
                                             </label>
-                                            <textarea id="user_message" name="message" class="form-control textarea-field" placeholder="Describe your business, services, and specialties" rows="4">{{ old('message') }}</textarea>
+                                            <textarea id="user_message" name="message" class="form-control textarea-field" placeholder="Write your message here..." rows="4" required>{{ old('message') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-12">

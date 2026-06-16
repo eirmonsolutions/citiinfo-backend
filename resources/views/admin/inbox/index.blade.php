@@ -1,86 +1,75 @@
 @extends('layouts.admin')
 
-@section('title', 'Inbox')
+@section('title', 'Messages')
+
+@push('styles')
+<link href="{{ asset('assets/css/messages.css') }}" rel="stylesheet">
+@endpush
 
 @section('content')
 <main class="main-dashboard">
 
     <div class="top-heading">
-        <h1>Inbox</h1>
+        <h1>Messages</h1>
         <a href="{{ route('admin.analytics.index') }}" class="theme-btn">Analytics</a>
     </div>
 
-    <div class="d-flex gap-2 flex-wrap mb-3">
-        <a href="{{ route('admin.inbox.index', ['filter' => 'all']) }}"
-            class="theme-btn {{ $filter === 'all' ? 'active' : '' }}">
-            All
+    <div class="msg-filter-bar">
+        <a href="{{ route('admin.inbox.index', ['tab' => 'inbox']) }}"
+            class="msg-filter-pill {{ ($tab ?? 'inbox') === 'inbox' ? 'active' : '' }}">
+            Listing Inbox
+            @if(($tab ?? 'inbox') === 'inbox' && $unreadCount > 0)
+            ({{ $unreadCount }})
+            @endif
         </a>
-        <a href="{{ route('admin.inbox.index', ['filter' => 'unread']) }}"
-            class="theme-btn {{ $filter === 'unread' ? 'active' : '' }}">
-            Unread ({{ $unreadCount }})
-        </a>
-        <a href="{{ route('admin.inbox.index', ['filter' => 'read']) }}"
-            class="theme-btn {{ $filter === 'read' ? 'active' : '' }}">
-            Read
+        <a href="{{ route('admin.inbox.index', ['tab' => 'sent']) }}"
+            class="msg-filter-pill {{ ($tab ?? 'inbox') === 'sent' ? 'active' : '' }}">
+            My Sent Messages
         </a>
     </div>
 
+    @if(($tab ?? 'inbox') === 'inbox')
+    <div class="msg-filter-bar">
+        <a href="{{ route('admin.inbox.index', ['tab' => 'inbox', 'filter' => 'all']) }}"
+            class="msg-filter-pill {{ $filter === 'all' ? 'active' : '' }}">All</a>
+        <a href="{{ route('admin.inbox.index', ['tab' => 'inbox', 'filter' => 'unread']) }}"
+            class="msg-filter-pill {{ $filter === 'unread' ? 'active' : '' }}">Unread ({{ $unreadCount }})</a>
+        <a href="{{ route('admin.inbox.index', ['tab' => 'inbox', 'filter' => 'pending']) }}"
+            class="msg-filter-pill {{ $filter === 'pending' ? 'active' : '' }}">Awaiting Reply</a>
+        <a href="{{ route('admin.inbox.index', ['tab' => 'inbox', 'filter' => 'replied']) }}"
+            class="msg-filter-pill {{ $filter === 'replied' ? 'active' : '' }}">Replied</a>
+    </div>
+    @endif
+
     @if($enquiries->isEmpty())
-    <section class="announcement-area">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="announcement-inner text-center p-5">
-                    <h2>No messages yet</h2>
-                    <p class="mb-0">When someone fills the enquiry form on your listing, their message will appear here.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="msg-empty-state">
+        @if(($tab ?? 'inbox') === 'sent')
+        <h2>No sent messages yet</h2>
+        <p>When you send a message from any listing page (while logged in), it will appear here with the business reply.</p>
+        @else
+        <h2>No messages on your listings</h2>
+        <p>When a customer sends a message on your listing page, it will appear here.</p>
+        @endif
+    </div>
     @else
-    <section class="table-section table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>From</th>
-                    <th>Listing</th>
-                    <th>Phone</th>
-                    <th>Message</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($enquiries as $index => $enquiry)
-                <tr class="{{ !$enquiry->is_read ? 'table-light fw-semibold' : '' }}">
-                    <td>{{ $enquiries->firstItem() + $index }}</td>
-                    <td>
-                        {{ $enquiry->name }}<br>
-                        <small class="text-muted">{{ $enquiry->email }}</small>
-                    </td>
-                    <td>{{ $enquiry->listing->business_name ?? '-' }}</td>
-                    <td>{{ $enquiry->phone }}</td>
-                    <td style="max-width:220px;">{{ \Illuminate\Support\Str::limit($enquiry->message ?? '-', 60) }}</td>
-                    <td>{{ $enquiry->created_at->format('d M Y, h:i A') }}</td>
-                    <td>
-                        @if($enquiry->is_read)
-                        <span class="badge bg-secondary">Read</span>
-                        @else
-                        <span class="badge bg-primary">New</span>
-                        @endif
-                    </td>
-                    <td>
-                        <a href="{{ route('admin.inbox.show', $enquiry) }}" class="theme-btn btn-sm">View</a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </section>
+    <div class="msg-list-stack">
+        @foreach($enquiries as $enquiry)
+            @if(($tab ?? 'inbox') === 'sent')
+            @include('partials.enquiry-sent-card', [
+                'enquiry' => $enquiry,
+                'showRoute' => route('admin.inbox.show', $enquiry),
+            ])
+            @else
+            @include('partials.enquiry-list-card', [
+                'enquiry' => $enquiry,
+                'showRoute' => route('admin.inbox.show', $enquiry),
+            ])
+            @endif
+        @endforeach
+    </div>
 
     <div class="mt-3">
-        {{ $enquiries->links() }}
+        {{ $enquiries->appends(['tab' => $tab ?? 'inbox', 'filter' => $filter ?? 'all'])->links() }}
     </div>
     @endif
 

@@ -29,6 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Share web login session with /api/* when called from Next.js (localhost:3000)
         $middleware->statefulApi();
 
+        // Next.js / mobile clients use Bearer tokens on /api/* without XSRF-TOKEN cookie
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);

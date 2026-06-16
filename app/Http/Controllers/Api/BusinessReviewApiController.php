@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BusinessReview;
+use App\Services\BusinessEnquiryService;
 use Illuminate\Http\Request;
 
 class BusinessReviewApiController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, BusinessEnquiryService $enquiryService)
     {
         $user = $request->user();
 
@@ -30,7 +31,7 @@ class BusinessReviewApiController extends Controller
             ], 422);
         }
 
-        BusinessReview::create([
+        $review = BusinessReview::create([
             'business_id' => $data['business_id'],
             'user_id' => $user->id,
             'name' => $user->name,
@@ -40,10 +41,12 @@ class BusinessReviewApiController extends Controller
             'is_approved' => true,
         ]);
 
+        $enquiryService->syncFromReview($review, $user);
+
         return response()->json([
             'ok' => true,
             'success' => true,
-            'message' => 'Thank you! Your review has been submitted successfully.',
+            'message' => 'Thank you! Your review has been submitted. Check Messages for replies.',
         ]);
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.user')
 
 @section('title', 'Message')
 
@@ -10,15 +10,15 @@
 <main class="main-dashboard">
 
     <div class="top-heading">
-        <h1>{{ ($mode ?? 'inbox') === 'sent' ? 'My Message' : 'Customer Message' }}</h1>
-        <a href="{{ route('admin.inbox.index', ['tab' => ($mode ?? 'inbox') === 'sent' ? 'sent' : 'inbox']) }}" class="theme-btn">Back</a>
+        <h1>{{ $mode === 'inbox' ? 'Customer Message' : 'My Message' }}</h1>
+        <a href="{{ route('user.messages.index', ['tab' => $mode]) }}" class="theme-btn">Back</a>
     </div>
 
     @if(session('success'))
     <div class="msg-alert-success">{{ session('success') }}</div>
     @endif
 
-    @if(($mode ?? 'inbox') === 'sent')
+    @if($mode === 'sent')
     <div class="msg-page-card">
         <div class="msg-page-header">
             <div>
@@ -42,13 +42,13 @@
             @if($enquiry->hasReply())
             <div class="msg-bubble incoming">
                 <div class="msg-bubble-label">
-                    <span>{{ $enquiry->replier->name ?? 'Business Owner' }}</span>
+                    <span>{{ $enquiry->replier->name ?? 'Business' }}</span>
                     <span class="msg-bubble-time">{{ $enquiry->replied_at?->format('d M Y, h:i A') }}</span>
                 </div>
                 <p class="msg-bubble-body">{{ $enquiry->admin_reply }}</p>
             </div>
             @else
-            <div class="msg-waiting-box">Waiting for a reply from the listing owner.</div>
+            <div class="msg-waiting-box">Waiting for a reply from the business owner.</div>
             @endif
         </div>
     </div>
@@ -56,25 +56,8 @@
     @include('partials.enquiry-detail', [
         'enquiry' => $enquiry,
         'showReplyForm' => true,
-        'replyRoute' => route('admin.inbox.reply', $enquiry),
+        'replyRoute' => route('user.messages.reply', $enquiry),
     ])
-
-    <div class="msg-compose-actions" style="max-width:960px;margin:16px auto 0;">
-        @if(!$enquiry->is_read)
-        <form method="POST" action="{{ route('admin.inbox.markRead', $enquiry) }}">
-            @csrf
-            @method('PATCH')
-            <button type="submit" class="msg-btn-secondary">Mark as Read</button>
-        </form>
-        @endif
-
-        <form method="POST" action="{{ route('admin.inbox.destroy', $enquiry) }}"
-            onsubmit="return confirm('Delete this message?')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="msg-btn-danger">Delete Message</button>
-        </form>
-    </div>
     @endif
 
 </main>

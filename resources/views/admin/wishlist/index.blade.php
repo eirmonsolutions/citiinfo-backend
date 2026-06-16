@@ -35,14 +35,21 @@
                     <div class="front-listing-img">
                         <div class="listing-slider-wrapper mySwiper mb-5">
                             <div class="swiper-wrapper">
-                                @foreach($listing->gallery as $img)
+                                @forelse($listing->gallery as $img)
                                 <div class="swiper-slide listing-slider-single">
                                     <img
                                         loading="lazy"
                                         src="{{ asset('storage/'.$img->image_path) }}"
                                         alt="{{ $img->alt_text ?? $listing->business_name }}">
                                 </div>
-                                @endforeach
+                                @empty
+                                <div class="swiper-slide listing-slider-single">
+                                    <img
+                                        loading="lazy"
+                                        src="{{ $listing->logo ? asset('storage/'.$listing->logo) : asset('assets/images/favicon.jpg') }}"
+                                        alt="{{ $listing->business_name }}">
+                                </div>
+                                @endforelse
                             </div>
                             <div class="swiper-scrollbar"></div>
                         </div>
@@ -190,7 +197,12 @@
             </div>
 
             @empty
-            <p>No saved listings found.</p>
+            <div class="col-12">
+                <div class="announcement-inner text-center p-5">
+                    <h2>No saved listings yet</h2>
+                    <p class="mb-0">Browse listings and tap the heart icon to save them here.</p>
+                </div>
+            </div>
             @endforelse
 
         </div>
@@ -224,17 +236,20 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.action === 'removed') {
+                            const wrapper = card?.closest('.whishlist-wrapper');
                             card.style.transition = 'all 0.35s ease';
                             card.style.opacity = '0';
                             card.style.transform = 'translateY(-10px)';
 
                             setTimeout(() => {
-                                card.remove();
+                                wrapper?.remove();
 
-                                const remaining = document.querySelectorAll('.front-listing-box');
+                                const remaining = document.querySelectorAll('.whishlist-wrapper');
                                 if (remaining.length === 0) {
-                                    document.querySelector('.whishlist-wrapper').innerHTML =
-                                        '<p>No saved listings found.</p>';
+                                    const grid = document.querySelector('.whistlist-grid');
+                                    if (grid) {
+                                        grid.innerHTML = '<div class="col-12"><div class="announcement-inner text-center p-5"><h2>No saved listings yet</h2><p class="mb-0">Browse listings and tap the heart icon to save them here.</p></div></div>';
+                                    }
                                 }
                             }, 350);
                         } else if (data.success && data.action === 'added') {

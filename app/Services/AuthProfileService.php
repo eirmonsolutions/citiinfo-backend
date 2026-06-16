@@ -49,6 +49,12 @@ class AuthProfileService
             ->values()
             ->all();
 
+        $messagesUrl = match ($role) {
+            'superadmin' => url('/superadmin/messages'),
+            'admin' => url('/admin/inbox?tab=sent'),
+            default => url('/user/messages'),
+        };
+
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -59,6 +65,7 @@ class AuthProfileService
             'initials' => $initials,
             'avatar' => $user->avatar ?? null,
             'dashboard_url' => $dashboardUrl,
+            'messages_url' => $messagesUrl,
             'wishlist_count' => count($wishlistIds),
             'wishlist_ids' => $wishlistIds,
         ];

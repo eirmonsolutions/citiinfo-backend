@@ -16,11 +16,12 @@ class ListingEnquiryController extends Controller
             'name'    => 'required|string|max:255',
             'email'   => 'required|email|max:255',
             'phone'   => 'required|string|max:50',
-            'message' => 'nullable|string',
+            'message' => 'required|string|min:3',
         ]);
 
-        $enquiryService->submit($data, $listing);
+        $enquiryService->submit($data, $listing, auth()->user());
 
-        return back()->with('success', 'Your enquiry has been sent successfully.');
+        return back()
+            ->with('success', 'Your message has been sent successfully. Check Messages in your dashboard for the reply.');
     }
 }
