@@ -4,6 +4,7 @@ return [
 
     'paths' => [
         'api/*',
+        'auth/session-profile',
         'login',
         'logout',
         'register',

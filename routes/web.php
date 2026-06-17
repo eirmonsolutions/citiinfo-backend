@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingPageController;
@@ -88,6 +89,9 @@ Route::get('/categories', [CategoryPageController::class, 'index'])->name('categ
 
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+
+// SPA auth sync (citiinfo.com.au reads same web session as dashboard login)
+Route::get('/auth/session-profile', [AuthController::class, 'profile']);
 
 Route::post('/logout', [LogoutController::class, 'destroy'])
     ->name('logout');

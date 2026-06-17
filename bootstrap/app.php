@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ConfigureHostingSession;
+use App\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -26,8 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
             ConfigureHostingSession::class,
         ]);
 
-        // Share web login session with /api/* when called from Next.js (localhost:3000)
-        $middleware->statefulApi();
+        // Share web login session with /api/* (citiinfo.com.au → api.citiinfo.com.au)
+        $middleware->api(prepend: [
+            ConfigureHostingSession::class,
+            EnsureFrontendRequestsAreStateful::class,
+        ]);
 
         // Next.js / mobile clients use Bearer tokens on /api/* without XSRF-TOKEN cookie
         $middleware->validateCsrfTokens(except: [
