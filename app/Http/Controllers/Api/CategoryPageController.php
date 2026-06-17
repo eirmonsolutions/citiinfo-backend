@@ -43,8 +43,8 @@ class CategoryPageController extends Controller
                 'id' => $cat->id,
                 'name' => $cat->name,
                 'slug' => $cat->slug,
-                'categoryimage_url' => $cat->categoryimage ? asset('storage/' . $cat->categoryimage) : null,
-                'image_url' => $cat->image ? asset('storage/' . $cat->image) : null,
+                'categoryimage_url' => \storage_public_url($cat->categoryimage),
+                'image_url' => \storage_public_url($cat->image),
                 'listings_count' => $cat->listings_count,
             ]),
             'pagination' => [
@@ -99,7 +99,7 @@ class CategoryPageController extends Controller
                 'phone' => $listing->phone,
                 'whatsapp' => $listing->whatsapp,
                 'address' => $listing->address,
-                'image_url' => $listing->image ? asset('storage/' . $listing->image) : null,
+                'image_url' => \storage_public_url($listing->image),
                 'description' => $listing->description,
             ]),
             'pagination' => [

@@ -82,6 +82,13 @@ class BusinessListing extends Model
         return $this->hasMany(\App\Models\BusinessReview::class, 'business_id');
     }
 
+    public function approvedReviews()
+    {
+        return $this->hasMany(\App\Models\BusinessReview::class, 'business_id')
+            ->approved()
+            ->latest();
+    }
+
     public function faqs()
     {
         return $this->hasMany(\App\Models\FAQ::class, 'listing_id');

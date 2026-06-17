@@ -22,6 +22,11 @@ class BusinessReview extends Model
         'is_approved' => 'boolean',
     ];
 
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
+
     public function business()
     {
         return $this->belongsTo(BusinessListing::class, 'business_id');
@@ -30,5 +35,10 @@ class BusinessReview extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function enquiry()
+    {
+        return $this->hasOne(BusinessEnquiry::class, 'business_review_id');
     }
 }

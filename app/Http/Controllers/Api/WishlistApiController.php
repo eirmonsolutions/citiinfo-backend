@@ -24,7 +24,7 @@ class WishlistApiController extends Controller
             ->whereIn('id', $ids)
             ->where('status', 'published')
             ->where('is_allowed', 1)
-            ->with(['categoryRel', 'cityRel', 'gallery', 'reviews'])
+            ->with(['categoryRel', 'cityRel', 'gallery', 'reviews' => fn ($q) => $q->approved()->latest()])
             ->latest()
             ->get();
 

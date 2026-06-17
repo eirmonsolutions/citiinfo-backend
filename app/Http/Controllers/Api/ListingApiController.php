@@ -32,7 +32,7 @@ class ListingApiController extends Controller
                 'contacts',
                 'services',
                 'gallery',
-                'reviews',
+                'reviews' => fn ($q) => $q->approved()->latest(),
                 'features.feature',
                 'hours',
                 'coupons',
@@ -132,7 +132,9 @@ class ListingApiController extends Controller
         if ($sort === 'popular') {
             $query->orderByDesc('views_count')->orderByDesc('id');
         } elseif ($sort === 'top_rated') {
-            $query->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
+            $query
+                ->withAvg(['reviews as reviews_avg_rating' => fn ($q) => $q->approved()], 'rating')
+                ->orderByDesc('reviews_avg_rating');
         } elseif ($sort === 'name_asc') {
             $query->orderBy('business_name', 'asc');
         } elseif ($sort === 'name_desc') {

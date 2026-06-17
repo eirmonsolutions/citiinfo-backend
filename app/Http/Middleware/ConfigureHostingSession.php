@@ -15,8 +15,13 @@ class ConfigureHostingSession
         $isHttps = $request->isSecure()
             || strtolower((string) $request->header('X-Forwarded-Proto')) === 'https';
 
-        // Must include port (e.g. :8000) or asset() CSS/JS URLs break on php artisan serve
-        if ($host) {
+        // API JSON must use APP_URL for storage links (not X-Forwarded-Host from Next.js proxy).
+        if ($request->is('api/*')) {
+            $appUrl = rtrim((string) config('app.url'), '/');
+            if ($appUrl !== '') {
+                URL::forceRootUrl($appUrl);
+            }
+        } elseif ($host) {
             URL::forceRootUrl($request->getSchemeAndHttpHost());
         }
 

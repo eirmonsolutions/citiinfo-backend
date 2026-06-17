@@ -25,6 +25,7 @@ class CategoryController extends Controller
                 'name',
                 'slug',
                 'icon',
+                'categoryimage',
             ]);
 
         return response()->json([

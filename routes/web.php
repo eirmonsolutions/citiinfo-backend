@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Admin\InboxController;
 use App\Http\Controllers\SuperAdmin\AnalyticsController as SuperadminAnalyticsController;
 use App\Http\Controllers\SuperAdmin\SuperadminInboxController;
+use App\Http\Controllers\SuperAdmin\SuperadminReviewController;
 use App\Http\Controllers\ListingEnquiryController;
 use App\Http\Controllers\AjaxLocationController;
 use App\Http\Controllers\SuperAdmin\SuperadminDashboardController;
@@ -227,6 +228,12 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::get('/messages/{enquiry}', [SuperadminInboxController::class, 'show'])->name('.messages.show');
     Route::post('/messages/{enquiry}/reply', [SuperadminInboxController::class, 'reply'])->name('.messages.reply');
     Route::delete('/messages/{enquiry}', [SuperadminInboxController::class, 'destroy'])->name('.messages.destroy');
+
+    Route::get('/reviews', [SuperadminReviewController::class, 'index'])->name('.review.index');
+    Route::get('/reviews/{review}/edit', [SuperadminReviewController::class, 'edit'])->name('.review.edit');
+    Route::put('/reviews/{review}', [SuperadminReviewController::class, 'update'])->name('.review.update');
+    Route::patch('/reviews/{review}/toggle', [SuperadminReviewController::class, 'toggleVisibility'])->name('.review.toggle');
+    Route::delete('/reviews/{review}', [SuperadminReviewController::class, 'destroy'])->name('.review.destroy');
 });
 
 
