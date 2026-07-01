@@ -16,7 +16,7 @@ class WishlistController extends Controller
         $wishIds = Wishlist::where('user_id', $userId)->pluck('business_id')->all();
 
         $listings = BusinessListing::query()
-            ->with(['gallery', 'hours', 'categoryRel', 'cityRel'])
+            ->with(['gallery', 'hours', 'categoryRel', 'cityRel', 'stateRel'])
             ->whereIn('id', $wishIds)
             ->where('status', 'published')
             ->where('is_allowed', 1)

@@ -96,7 +96,7 @@
             <span class="sidebar-link">Listing Users</span>
         </a>
 
-        <!-- SEO Users (blog) -->
+        <!-- SEO Users -->
         <a href="{{ route('superadmin.seo-user.index') }}" class="sidebar-list {{ request()->routeIs('superadmin.seo-user.*') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -105,24 +105,6 @@
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
             <span class="sidebar-link">SEO Users</span>
-        </a>
-
-        <!-- Plans -->
-        <a href="" class="sidebar-list">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin">
-                <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
-                <circle cx="12" cy="10" r="3" />
-            </svg>
-            <span class="sidebar-link">Plans</span>
-        </a>
-
-        <!-- Payment -->
-        <a href="" class="sidebar-list">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send">
-                <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-                <path d="m21.854 2.147-10.94 10.939" />
-            </svg>
-            <span class="sidebar-link">Payment</span>
         </a>
 
         <!-- Inbox -->
@@ -148,30 +130,16 @@
             <span class="sidebar-link">Reviews</span>
         </a>
 
-        <!-- Ads Campaigns -->
-        <a href="" class="sidebar-list">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-radio">
-                <path d="M16.247 7.761a6 6 0 0 1 0 8.478" />
-                <path d="M19.075 4.933a10 10 0 0 1 0 14.134" />
-                <path d="M4.925 19.067a10 10 0 0 1 0-14.134" />
-                <path d="M7.753 16.239a6 6 0 0 1 0-8.478" />
-                <circle cx="12" cy="12" r="2" />
-            </svg>
-            <span class="sidebar-link">Ads Campaigns</span>
-        </a>
-
-        <!-- Ads Campaigns -->
+        <!-- Blogs -->
         <a href="{{ route('superadmin.blog.index') }}" class="sidebar-list {{ request()->routeIs('superadmin.blog.*') ? 'active' : '' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-radio">
-                <path d="M16.247 7.761a6 6 0 0 1 0 8.478" />
-                <path d="M19.075 4.933a10 10 0 0 1 0 14.134" />
-                <path d="M4.925 19.067a10 10 0 0 1 0-14.134" />
-                <path d="M7.753 16.239a6 6 0 0 1 0-8.478" />
-                <circle cx="12" cy="12" r="2" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper">
+                <path d="M15 18h-5" />
+                <path d="M18 14h-8" />
+                <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2" />
+                <rect width="8" height="4" x="10" y="6" rx="1" />
             </svg>
             <span class="sidebar-link">Blogs</span>
         </a>
-
 
     </nav>
 

@@ -693,29 +693,29 @@ aside.sidebar-main .sidebar-heading svg {
     padding: 12px 10px;
 }
 
-    {
+.dashboard-wrapper {
     display: flex;
-    position: relative;
-    height: 100vh;
+    width: 100%;
+    min-height: 100vh;
 }
 
 aside.sidebar-main {
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 0;
-    bottom: 0;
     width: 230px;
+    height: 100dvh;
     z-index: 996;
     transition: all 0.3s;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #aab7cf transparent;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
     box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
     background-color: #fff;
 }
 
 .sidebar-heading {
-    padding: 15px;
+    padding: 12px 15px;
     border-bottom: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
@@ -725,15 +725,70 @@ aside.sidebar-main {
 
 .sidebar-heading h1 {
     margin-bottom: 0;
-    font-size: 25px;
+    font-size: 22px;
     color: #fff;
     font-weight: 600;
 }
 
 nav.sidebar-nav {
+    min-height: 0;
+    overflow-x: hidden;
     overflow-y: auto;
-    flex: 1 1 0%;
-    padding: 10px 12px;
+    padding: 6px 8px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #7c8db5 #eef2f8;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+nav.sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+nav.sidebar-nav::-webkit-scrollbar-track {
+    background: #eef2f8;
+    border-radius: 4px;
+}
+
+nav.sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: #7c8db5;
+    border-radius: 4px;
+}
+
+aside.sidebar-main .sidebar-list {
+    padding: 8px 12px;
+    margin: 2px 0;
+    gap: 10px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+
+aside.sidebar-main .sidebar-list svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.logout-btn {
+    padding: 0;
+    border-top: 1px solid #e5e7eb;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #3b82f6 100%);
+    width: 100%;
+}
+
+.logout-btn button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.3s;
+    padding: 12px 20px;
+    border-radius: 0;
+    gap: 10px;
 }
 
 a.sidebar-list {
@@ -771,48 +826,31 @@ a.sidebar-list.active {
     margin: 0 auto;
 }
 
-.logout-btn {
-    padding: 0px;
-    border-bottom: 1px solid #e5e7eb;
-    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #3b82f6 100%);
-    position: fixed;
-    bottom: 0;
-    width: 230px;
-}
-
 .sidebar-collapsed .sidebar-main .logout-btn {
     width: 78px;
 }
 
 .sidebar-collapsed .dashboard-area {
-    margin-left: 80px;
+    margin-left: 78px;
+    width: calc(100% - 78px);
 }
-
-.logout-btn button {
-    background-color: transparent;
-    border: none;
-    color: #fff;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.3s;
-    padding: 15px 32px;
-    border-radius: 8px;
-    gap: 16px;
-}
-
 
 .dashboard-area {
-    position: relative;
-    margin-left: 242px;
+    flex: 1 1 auto;
+    width: calc(100% - 230px);
+    margin-left: 230px;
+    min-height: 100vh;
+    min-width: 0;
     transition: all 0.3s;
-    padding: 10px;
-    overflow: hidden;
+    padding: 10px 16px 16px;
+    background-color: #f6f9ff;
+    overflow-x: hidden;
 }
 
 header.dashboard-header {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 8px;
     padding: 10px 20px 10px 10px;
     --tw-bg-opacity: 1;
     background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -867,7 +905,17 @@ header.dashboard-header {
 }
 
 main.main-dashboard {
+    width: 100%;
+    max-width: 100%;
     padding: 20px;
+}
+
+section.dashboard-boxes,
+section.dashboard-boxes > .row {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 main.main-dashboard>h1 {
@@ -2508,6 +2556,14 @@ section.listing-area-front {
 
 .status-badge.open {
     color: #16a34a;
+}
+
+.status-badge.closed {
+    color: #dc2626;
+}
+
+.status-badge.lunch {
+    color: #d97706;
 }
 
 .status-badge {

@@ -9,6 +9,25 @@ use Illuminate\Http\Request;
 
 class CategoryPageController extends Controller
 {
+    private static function publicStorageUrl(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $clean = ltrim($path, '/');
+
+        if (str_starts_with($clean, 'storage/')) {
+            $clean = substr($clean, strlen('storage/'));
+        }
+
+        return rtrim((string) config('app.url'), '/').'/storage/'.$clean;
+    }
+
     public function index(Request $request)
     {
         $q = trim($request->get('q', ''));
@@ -43,8 +62,8 @@ class CategoryPageController extends Controller
                 'id' => $cat->id,
                 'name' => $cat->name,
                 'slug' => $cat->slug,
-                'categoryimage_url' => \storage_public_url($cat->categoryimage),
-                'image_url' => \storage_public_url($cat->image),
+                'categoryimage_url' => self::publicStorageUrl($cat->categoryimage),
+                'image_url' => self::publicStorageUrl($cat->image),
                 'listings_count' => $cat->listings_count,
             ]),
             'pagination' => [
@@ -99,7 +118,7 @@ class CategoryPageController extends Controller
                 'phone' => $listing->phone,
                 'whatsapp' => $listing->whatsapp,
                 'address' => $listing->address,
-                'image_url' => \storage_public_url($listing->image),
+                'image_url' => self::publicStorageUrl($listing->image),
                 'description' => $listing->description,
             ]),
             'pagination' => [

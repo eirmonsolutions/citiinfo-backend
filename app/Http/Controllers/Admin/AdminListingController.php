@@ -46,8 +46,9 @@ class AdminListingController extends Controller
         $categories = Category::orderBy('name')->get();
         $countries  = Country::orderBy('name')->get();
         $features   = Feature::orderBy('name')->get();
+        $defaultCountry = Country::defaultCountry();
 
-        return view('admin.listing.create', compact('categories', 'countries', 'features'));
+        return view('admin.listing.create', compact('categories', 'countries', 'features', 'defaultCountry'));
     }
 
     // ✅ STORE (Dashboard admin add karega => ALWAYS current logged-in admin ki listing)

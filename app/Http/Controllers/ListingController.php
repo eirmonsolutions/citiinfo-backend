@@ -161,8 +161,9 @@ class ListingController extends Controller
         $countries  = Country::orderBy('name')->get();
         $features   = Feature::orderBy('name')->get();
         $categories = Category::orderBy('name')->get();
+        $defaultCountry = Country::defaultCountry();
 
-        return view('pages.addlisting', compact('countries', 'categories', 'features'));
+        return view('pages.addlisting', compact('countries', 'categories', 'features', 'defaultCountry'));
     }
 
     public function getStates(Request $request)

@@ -17,6 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
             wrapper.classList.contains("sidebar-collapsed") ? "1" : "0"
         );
     });
+
+    const activeLink = document.querySelector(".sidebar-nav .sidebar-list.active");
+    if (activeLink) {
+        activeLink.scrollIntoView({ block: "nearest", behavior: "instant" });
+    }
 });
 //
 

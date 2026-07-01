@@ -15,4 +15,14 @@ class Country extends Model
     {
         return $this->hasMany(State::class, 'country_id');
     }
+
+    public static function defaultCountry(): ?self
+    {
+        return static::query()
+            ->where(function ($query) {
+                $query->where('iso2', 'AU')
+                    ->orWhere('name', 'Australia');
+            })
+            ->first();
+    }
 }

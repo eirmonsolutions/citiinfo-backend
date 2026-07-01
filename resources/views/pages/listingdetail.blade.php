@@ -772,13 +772,14 @@
                     use Carbon\Carbon;
 
                     $daysOrder = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+                    $openStatus = listingOpenStatus($listing);
 
                     $hoursByDay = ($listing->hours ?? collect())
                     ->keyBy(fn($h) => strtolower($h->day_of_week));
 
                     $fmt = fn($t) => $t ? Carbon::parse($t)->format('g:i a') : null;
 
-                    $todayKey = strtolower(now()->format('l')); // monday...
+                    $todayKey = $openStatus['day'];
                     $todayRow = $hoursByDay->get($todayKey);
 
                     $isClosedToday = !$todayRow || (int)($todayRow->is_closed ?? 0) === 1;
@@ -786,10 +787,8 @@
                     $openStr = (!$isClosedToday) ? $fmt($todayRow->open_time) : null;
                     $closeStr = (!$isClosedToday) ? $fmt($todayRow->close_time) : null;
 
-                    // Top label (Google-style)
-                    $topLabel = $isClosedToday
-                    ? 'Closed'
-                    : ($openStr && $closeStr ? "Open · Closes {$closeStr}" : 'Open');
+                    $topLabel = $openStatus['detail_label'];
+                    $statusClass = $openStatus['is_open'] ? 'is-open' : ($openStatus['is_lunch'] ? 'is-lunch' : 'is-closed');
 
                     @endphp
 
@@ -800,7 +799,7 @@
                             <div class="bh-left">
                                 <span class="bh-title">Hours:</span>
                                 <span class="bh-today">{{ ucfirst($todayKey) }}</span>
-                                <span class="bh-status {{ $isClosedToday ? 'is-closed' : 'is-open' }}">
+                                <span class="bh-status {{ $statusClass }}">
                                     {{ $topLabel }}
                                 </span>
                             </div>

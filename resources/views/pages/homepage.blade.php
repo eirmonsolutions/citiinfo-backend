@@ -316,68 +316,8 @@
 
 
 
-                        {{-- ✅ DYNAMIC STATUS BADGE (Open/Closed/Lunch) --}}
-                        @php
-                        $day = strtolower(now()->format('l')); // monday...
-                        $today = $listing->hours->firstWhere('day_of_week', $day);
+                        @include('partials.listing-open-status', ['listing' => $listing])
 
-                        $statusText = 'Closed Now';
-                        $statusClass = 'closed';
-
-                        // helper: normalize time to H:i:s (supports H:i or H:i:s)
-                        $norm = function ($t) {
-                        if (!$t) return null;
-                        $t = trim($t);
-                        if (preg_match('/^\d{2}:\d{2}$/', $t)) return $t . ':00';
-                        if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $t)) return $t;
-                        return null;
-                        };
-
-                        // helper: time in range (supports overnight)
-                        $inRange = function ($now, $start, $end) {
-                        if (!$now || !$start || !$end) return false;
-
-                        // normal range
-                        if ($start <= $end) {
-                            return ($now>= $start && $now <= $end);
-                                }
-
-                                // overnight (e.g., 22:00:00 to 02:00:00)
-                                return ($now>= $start || $now <= $end);
-                                    };
-
-                                    if ($today && (int)$today->is_closed === 0) {
-
-                                    $open = $norm($today->open_time);
-                                    $close = $norm($today->close_time);
-                                    $breakStart = $norm($today->break_start);
-                                    $breakEnd = $norm($today->break_end);
-
-                                    // ✅ current time (server/app timezone)
-                                    $tz = $listing->cityRel->timezone ?? config('app.timezone');
-                                    $nowTime = \Carbon\Carbon::now($tz)->format('H:i:s');
-
-
-                                    if ($inRange($nowTime, $open, $close)) {
-
-                                    if ($breakStart && $breakEnd && $inRange($nowTime, $breakStart, $breakEnd)) {
-                                    $statusText = 'Lunch Time';
-                                    $statusClass = 'lunch';
-                                    } else {
-                                    $statusText = 'Open Now';
-                                    $statusClass = 'open';
-                                    }
-                                    }
-                                    }
-                                    @endphp
-
-                                    <div class="status-badge {{ $statusClass }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock">
-                                            <path d="M12 6v6l4 2" />
-                                            <circle cx="12" cy="12" r="10" />
-                                        </svg>
-                                        {{ $statusText }}
-                                    </div>
 
                     </div>
 

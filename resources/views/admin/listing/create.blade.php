@@ -113,9 +113,15 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label class="form-label">Country <span class="required">*</span></label>
+                                                @php
+                                                    $selectedCountryId = old('country_id', $defaultCountry?->id);
+                                                    $selectedCountryLabel = $selectedCountryId
+                                                        ? ($countries->firstWhere('id', (int) $selectedCountryId)?->name ?? 'Select your country')
+                                                        : 'Select your country';
+                                                @endphp
                                                 <div class="custom-select" data-select id="countrySelect">
                                                     <button type="button" class="select-trigger" data-trigger>
-                                                        <span class="select-placeholder" data-label>Select your country</span>
+                                                        <span class="select-placeholder" data-label>{{ $selectedCountryLabel }}</span>
                                                         <span class="select-icon">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -140,7 +146,7 @@
                                                         </ul>
                                                     </div>
 
-                                                    <input type="hidden" name="country_id" data-hidden />
+                                                    <input type="hidden" name="country_id" data-hidden value="{{ $selectedCountryId }}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -1590,6 +1596,14 @@
                 }
             });
         });
+
+        const initialCountryId = countrySelect.querySelector('[data-hidden]')?.value;
+        if (initialCountryId) {
+            const initialCountryOpt = countrySelect.querySelector(`.select-option[data-id="${initialCountryId}"]`);
+            if (initialCountryOpt) {
+                initialCountryOpt.click();
+            }
+        }
 
         // STATE option click (dynamic => event delegation)
         stateOptions.addEventListener('click', async (e) => {

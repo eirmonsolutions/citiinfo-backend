@@ -1,21 +1,20 @@
 <?php
 
+use App\Services\BusinessHoursService;
 use Carbon\Carbon;
 
-if (!function_exists('listingNow')) {
-    function listingNow($listing)
+if (! function_exists('listingNow')) {
+    function listingNow($listing): Carbon
     {
-        // 1️⃣ City timezone (highest priority)
-        if (!empty($listing->cityRel?->timezone)) {
-            return Carbon::now($listing->cityRel->timezone);
-        }
+        $timezone = app(BusinessHoursService::class)->resolveTimezone($listing);
 
-        // 2️⃣ Country timezone
-        if (!empty($listing->countryRel?->timezone)) {
-            return Carbon::now($listing->countryRel->timezone);
-        }
+        return Carbon::now($timezone);
+    }
+}
 
-        // 3️⃣ Fallback app timezone
-        return Carbon::now(config('app.timezone'));
+if (! function_exists('listingOpenStatus')) {
+    function listingOpenStatus($listing): array
+    {
+        return app(BusinessHoursService::class)->status($listing);
     }
 }

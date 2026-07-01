@@ -6,11 +6,76 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessListing;
 use App\Models\State;
 use App\Models\City;
+use App\Services\BusinessHoursService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class ListingApiController extends Controller
 {
+    public function __construct(private BusinessHoursService $businessHours) {}
+
+    private function attachOpenStatus(BusinessListing $listing): array
+    {
+        $data = $listing->toArray();
+        $data['open_status'] = $this->businessHours->status($listing);
+
+        return $data;
+    }
+
+    private function listingRelations(string $today): array
+    {
+        return [
+            'cityRel',
+            'stateRel',
+            'countryRel',
+            'categoryRel',
+            'contacts',
+            'services',
+            'gallery',
+            'reviews' => fn ($q) => $q->approved()->latest(),
+            'features.feature',
+            'hours',
+            'coupons',
+            'faqs.items',
+            'socialLinks',
+            'announcements' => function ($q) use ($today) {
+                $q->whereDate('start_date', '<=', $today)
+                    ->whereDate('end_date', '>=', $today)
+                    ->latest();
+            },
+            'events' => function ($q) use ($today) {
+                $q->whereDate('start_date', '<=', $today)
+                    ->whereDate('end_date', '>=', $today)
+                    ->latest();
+            },
+        ];
+    }
+
+    private function withApprovedReviewStats($query)
+    {
+        return $query
+            ->withCount(['reviews as reviews_count' => fn ($q) => $q->approved()])
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($q) => $q->approved()], 'rating');
+    }
+
+    public function show(string $slug)
+    {
+        $today = now()->toDateString();
+
+        $listing = $this->withApprovedReviewStats(
+            BusinessListing::query()
+                ->with($this->listingRelations($today))
+                ->where('slug', $slug)
+                ->where('status', 'published')
+                ->where('is_allowed', 1)
+        )->firstOrFail();
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->attachOpenStatus($listing),
+        ]);
+    }
+
     public function index(Request $request)
     {
         $q            = trim($request->get('q', ''));
@@ -23,34 +88,10 @@ class ListingApiController extends Controller
 
         $today = now()->toDateString();
 
-        $query = BusinessListing::query()
-            ->with([
-                'cityRel',
-                'stateRel',
-                'countryRel',
-                'categoryRel',
-                'contacts',
-                'services',
-                'gallery',
-                'reviews' => fn ($q) => $q->approved()->latest(),
-                'features.feature',
-                'hours',
-                'coupons',
-                'faqs.items',
-                'socialLinks',
-
-                'announcements' => function ($q) use ($today) {
-                    $q->whereDate('start_date', '<=', $today)
-                        ->whereDate('end_date', '>=', $today)
-                        ->latest();
-                },
-
-                'events' => function ($q) use ($today) {
-                    $q->whereDate('start_date', '<=', $today)
-                        ->whereDate('end_date', '>=', $today)
-                        ->latest();
-                },
-            ])
+        $query = $this->withApprovedReviewStats(
+            BusinessListing::query()
+                ->with($this->listingRelations($today))
+        )
             ->where('status', 'published')
             ->where('is_allowed', 1);
 
@@ -132,9 +173,12 @@ class ListingApiController extends Controller
         if ($sort === 'popular') {
             $query->orderByDesc('views_count')->orderByDesc('id');
         } elseif ($sort === 'top_rated') {
+            $query->orderByDesc('reviews_avg_rating');
+        } elseif ($sort === 'most_reviewed') {
             $query
-                ->withAvg(['reviews as reviews_avg_rating' => fn ($q) => $q->approved()], 'rating')
-                ->orderByDesc('reviews_avg_rating');
+                ->orderByDesc('reviews_count')
+                ->orderByDesc('reviews_avg_rating')
+                ->orderByDesc('id');
         } elseif ($sort === 'name_asc') {
             $query->orderBy('business_name', 'asc');
         } elseif ($sort === 'name_desc') {
@@ -162,7 +206,10 @@ class ListingApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $listings->items(),
+            'data' => collect($listings->items())
+                ->map(fn (BusinessListing $listing) => $this->attachOpenStatus($listing))
+                ->values()
+                ->all(),
             'pagination' => [
                 'current_page' => $listings->currentPage(),
                 'last_page'    => $listings->lastPage(),

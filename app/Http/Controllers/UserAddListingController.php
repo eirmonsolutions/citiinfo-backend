@@ -37,8 +37,9 @@ class UserAddListingController extends Controller
         $countries  = Country::orderBy('name')->get();
         $features   = Feature::orderBy('name')->get();
         $categories = Category::orderBy('name')->get();
+        $defaultCountry = Country::defaultCountry();
 
-        return view('user.addlisting.create', compact('countries', 'categories', 'features'));
+        return view('user.addlisting.create', compact('countries', 'categories', 'features', 'defaultCountry'));
     }
 
     public function getStates(Request $request)
